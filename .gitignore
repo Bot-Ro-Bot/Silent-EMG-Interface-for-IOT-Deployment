@@ -1,1 +1,4 @@
 env/
+codes/__pycache__/
+dataset/
+models/
