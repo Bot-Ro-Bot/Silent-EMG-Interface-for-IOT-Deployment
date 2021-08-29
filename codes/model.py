@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import StratifiedShuffleSplit
 
 from keras.models import save_model
-
+from keras.models import save_weights
 
 def get_data(path="data.pickle"):
     try:
@@ -232,7 +232,9 @@ def main():
     # save model
     try:
         print("Saving Model ... ")
-        save_model(model,os.path.join(MODEL_DIR,"model1D.h5"))
+        # save_model(model,os.path.join(MODEL_DIR,"model1D.h5"))
+        save_model(model,os.path.join(MODEL_DIR,"model1D_weights.h5"))
+
         print("Model saved !!")
 
     except Exception as ex:

@@ -205,5 +205,49 @@ def spectogram(data):
         feature_data.extend([temp_data])
     return np.array(feature_data)
 
+def CNN_1D(INPUT_SHAPE=(1654,8), DROPOUT=0.3, learning_rate=0.0003, activation="relu", neurons=64, K_regulizer=0.001):
+    model = keras.models.Sequential()
+    # 1st conv layer
+    model.add(keras.layers.Conv1D(32, (3), activation="relu", input_shape=INPUT_SHAPE,
+                                    kernel_regularizer=tf.keras.regularizers.l2(K_regulizer)))
+    model.add(tf.keras.layers.BatchNormalization())
+    model.add(tf.keras.layers.MaxPooling1D(
+        (3), strides=(2), padding='same'))
+
+    # 2nd conv layer
+    model.add(tf.keras.layers.Conv1D(64, (3), activation='relu',
+                                        kernel_regularizer=tf.keras.regularizers.l2(K_regulizer)))
+    model.add(tf.keras.layers.BatchNormalization())
+    model.add(tf.keras.layers.MaxPooling1D(
+        (3), strides=(2), padding='same'))
+
+    # 3rd conv layer
+    model.add(tf.keras.layers.Conv1D(128, (2), activation='relu',
+                                        kernel_regularizer=tf.keras.regularizers.l2(K_regulizer)))
+    model.add(tf.keras.layers.BatchNormalization())
+    model.add(tf.keras.layers.MaxPooling1D(
+        (2), strides=(2), padding='same'))
+
+    # flatten output and feed into dense layer
+    model.add(tf.keras.layers.Flatten())
+    tf.keras.layers.Dropout(DROPOUT)
+
+    model.add(tf.keras.layers.Dense(1024, activation='relu'))
+    tf.keras.layers.Dropout(DROPOUT)
+
+    model.add(tf.keras.layers.Dense(64, activation='relu'))
+    tf.keras.layers.Dropout(DROPOUT)
+
+    # softmax output layer
+    model.add(tf.keras.layers.Dense(5, activation='softmax'))
+
+    optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
+
+    model.compile(optimizer=optimizer,
+                    loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+    print(model.summary())
+    return model
+
+
 if __name__ == "__main__":
     print("You are in config file.")
