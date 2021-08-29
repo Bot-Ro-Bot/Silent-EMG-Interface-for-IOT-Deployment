@@ -1,8 +1,21 @@
 import os
-import datetime
+import vlc
+import time
+from gtts import gTTS
+from playsound import playsound
+import random
 
-SONGS = os.listdir("songs")
-os.chdir("songs")
+from samaye import get_time
+from mausam import get_weather
+
+SONGS = os.listdir("sangeet")
+# print(SONGS)
+PLAYLIST = [os.path.join("sangeet",song) for song in SONGS]
+# print(PLAYLIST)
+
+
+player = vlc.MediaPlayer(PLAYLIST[random.randint(0,len(SONGS))])
+
 
 class IOT:
     _SANGEET_FLAG = None
@@ -15,33 +28,67 @@ class IOT:
         pass
 
     def sangeet(self):
-        cmd = "setsid vlc "+ SONGS[0]
-        # print(cmd)
-        try :
-            os.system(cmd)
-        except Exception as ex:
-            print("Cannot play music because ",ex)
-   
+        # player = vlc.MediaPlayer(PLAYLIST[0])
+        if(self._SANGEET_FLAG==True):
+            player.pause()
+            return
+        val = player.play()
+        if(val==0):
+            self._SANGEET_FLAG = True
+
     def samaye(self):
-        time = datetime.datetime.now()
-        print(time)
-  
+        if (self._SANGEET_FLAG == True):
+            player.pause()
+            time.sleep(2)
+        samaye = get_time()
+        self.__speak(samaye)
+        time.sleep(2)
+        player.play()
+
     def mausam(self):
-        pass
-   
+        if (self._SANGEET_FLAG == True):
+            player.pause()
+            time.sleep(2)
+        mausam = get_weather()
+        self.__speak(mausam)
+        time.sleep(2)
+        player.play()
+
     def batti(self):
-        pass
+        print("Batti balyo")
 
     def pankha(self):
-        pass
+        print("Pankha balyo")
 
+    def __speak(self, text):
+        speak = gTTS(text=text, lang="ne", slow=False)
+        file = "audio.mp3"
+        speak.save(file)
+        playsound(file)
+        os.remove(file)
 
 
 def main():
     automate = IOT()
-    # automate.sangeet()
+    automate.sangeet()
     automate.samaye()
+    automate.mausam()
+
 
 if __name__ == "__main__":
-    main()
-    # print(SONGS)
+    automate = IOT()
+    tasks = {
+        "0": automate.samaye,
+        "1": automate.sangeet,
+        "2": automate.mausam,
+        "3": automate.batti,
+        "4": automate.pankha,
+    }
+
+    while True:
+        prediction = input("Enter prediction: ")
+        # print(prediction)
+        try:
+            tasks[prediction]()
+        except Exception as ex:
+            print("Please Enter valid prediction key")
