@@ -1,8 +1,14 @@
 import os
-import datetime
+from gtts import gTTS
+from playsound import playsound
 
-SONGS = os.listdir("songs")
-os.chdir("songs")
+from samaye import get_time
+from mausam import get_weather
+
+
+SONGS = os.listdir("sangeet")
+# os.chdir("songs")
+
 
 class IOT:
     _SANGEET_FLAG = None
@@ -23,25 +29,33 @@ class IOT:
             print("Cannot play music because ",ex)
    
     def samaye(self):
-        time = datetime.datetime.now()
-        print(time)
-  
+        samaye = get_time()
+        self.__speak(samaye)
+
     def mausam(self):
-        pass
-   
+        mausam = get_weather()
+        self.__speak(mausam)
+
     def batti(self):
         pass
 
     def pankha(self):
         pass
 
-
+    def __speak(self,text):
+        speak = gTTS(text=text, lang="ne", slow=False)
+        file = "audio.mp3"
+        speak.save(file)
+        playsound(file)
+        os.remove(file)
 
 def main():
     automate = IOT()
     # automate.sangeet()
     automate.samaye()
+    automate.mausam()
 
 if __name__ == "__main__":
     main()
+    print("Done !!")
     # print(SONGS)

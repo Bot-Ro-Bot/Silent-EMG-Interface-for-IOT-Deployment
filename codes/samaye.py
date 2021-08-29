@@ -43,7 +43,7 @@ def get_time():
 def main():
     samaye = get_time()
     speak = gTTS(text=samaye, lang="ne", slow= False) 
-    file = "nepali.mp3"
+    file = "samaya.mp3"
     speak.save(file)
     playsound(file)
 
