@@ -14,7 +14,7 @@ PLAYLIST = [os.path.join("sangeet",song) for song in SONGS]
 # print(PLAYLIST)
 
 
-player = vlc.MediaPlayer(PLAYLIST[random.randint(0,len(SONGS))])
+player = vlc.MediaPlayer(PLAYLIST[random.randint(0,len(SONGS)-1)])
 
 
 class IOT:
@@ -31,6 +31,7 @@ class IOT:
         # player = vlc.MediaPlayer(PLAYLIST[0])
         if(self._SANGEET_FLAG==True):
             player.pause()
+            # player = vlc.MediaPlayer(PLAYLIST[0])
             return
         val = player.play()
         if(val==0):
@@ -39,26 +40,29 @@ class IOT:
     def samaye(self):
         if (self._SANGEET_FLAG == True):
             player.pause()
-            time.sleep(2)
+            time.sleep(1)
         samaye = get_time()
         self.__speak(samaye)
-        time.sleep(2)
-        player.play()
+        time.sleep(1)
+        if(self._SANGEET_FLAG is not None):
+            player.play()
 
     def mausam(self):
         if (self._SANGEET_FLAG == True):
             player.pause()
-            time.sleep(2)
+            time.sleep(1)
         mausam = get_weather()
         self.__speak(mausam)
-        time.sleep(2)
-        player.play()
+        time.sleep(1)
+        if(self._SANGEET_FLAG is not None):
+            player.play()
+
 
     def batti(self):
         print("Batti balyo")
 
     def pankha(self):
-        print("Pankha balyo")
+        print("Pankha chalyo")
 
     def __speak(self, text):
         speak = gTTS(text=text, lang="ne", slow=False)
@@ -70,9 +74,9 @@ class IOT:
 
 def main():
     automate = IOT()
-    automate.sangeet()
-    automate.samaye()
-    automate.mausam()
+    # automate.sangeet()
+    # automate.samaye()
+    # automate.mausam()
 
 
 if __name__ == "__main__":
@@ -91,4 +95,4 @@ if __name__ == "__main__":
         try:
             tasks[prediction]()
         except Exception as ex:
-            print("Please Enter valid prediction key")
+            print("Please Enter valid prediction key or check your internet connection")

@@ -1,6 +1,7 @@
 import requests
 import string
 import json
+import os
 
 from gtts import gTTS
 from playsound import playsound
@@ -69,12 +70,12 @@ def get_weather():
 
 
 def main():
-    mausam = get_weather()
-    speak = gTTS(text=mausam, lang="ne", slow=False)
-    file = "mausam.mp3"
-    speak.save(file)
-    playsound(file)
-
+	mausam = get_weather()
+	speak = gTTS(text=mausam, lang="ne", slow=False)
+	file = "mausam.mp3"
+	speak.save(file)
+	playsound(file)
+	os.remove(file)
 
 if __name__ == "__main__":
     main()
