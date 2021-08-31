@@ -1,11 +1,11 @@
 import socket
 
-s = socket.socket()
+s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
-port = 12345
+port = 1234
 
-s.bind(('', port))        
-print ("socket binded to %s" %(port))
+s.bind((socket.gethostname(), port))        
+print("socket binded to %s" %(port))
  
 # put the socket into listening mode
 s.listen(5)    
@@ -20,7 +20,7 @@ while True:
     print ('Got connection from', addr )
     
     # send a thank you message to the client.
-    c.send('Thank you for connecting')
+    c.send(bytes("5","utf-8"))
     
     # Close the connection with the client
     c.close()
