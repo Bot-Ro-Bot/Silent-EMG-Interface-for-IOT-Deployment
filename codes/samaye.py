@@ -1,7 +1,7 @@
 from gtts import gTTS
 from playsound import playsound
 import datetime
-
+import os
 
 def get_time():
 
@@ -46,6 +46,8 @@ def main():
     file = "samaya.mp3"
     speak.save(file)
     playsound(file)
+    os.remove(file)
+
 
 if __name__ == "__main__":
     main()
