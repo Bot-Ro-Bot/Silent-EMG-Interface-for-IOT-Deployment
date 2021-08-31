@@ -1,5 +1,6 @@
 import os
 import vlc
+import socket
 from gtts import gTTS
 from playsound import playsound
 
@@ -11,26 +12,40 @@ from time import sleep # Import the sleep function from the time module
 GPIO.setwarnings(False) # Ignore warning for now
 GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
 
-BATTI = 8
-PANKHA = 10
+SENTENCES = ["अबको समय सुनाउ",
+             "एउटा सङ्गित बजाउ",
+             "आजको मौसम बताउ",
+             "बत्तिको अवस्था बदल",
+             "पङ्खाको स्तिथी बदल"]
 
-SONGS = os.listdir("sangeet")
-# print(SONGS)
-PLAYLIST = [os.path.join("sangeet",song) for song in SONGS]
-# print(PLAYLIST)
-player = vlc.MediaListPlayer()
+PORT = 5050
+# SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = "192.168.0.112"
+ADDR = (SERVER, PORT)
+FORMAT = 'utf-8'
+DISCONNECT_MESSAGE = "!DISCONNECT"
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(ADDR)
+
 
 class IOT:
     def __init__(self):
-
+        
+        self.BATTI = 8
+        self.PANKHA = 10
         self.BATTI_FLAG = False
         self.PANKHA_FLAG = False
-        GPIO.setup(BATTI, GPIO.OUT, initial=GPIO.LOW)
-        GPIO.setup(PANKHA, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(self.BATTI, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(self.PANKHA, GPIO.OUT, initial=GPIO.LOW)
 		
+        self.PLAYLIST = [os.path.join("sangeet",song) for song in os.listdir("sangeet") if song[-3:]=="mp3"]
+        # print(self.PLAYLIST)
+        global player
+        player = vlc.MediaListPlayer()
         VLC = vlc.Instance("--loop")
         media_list = VLC.media_list_new()
-        for song in PLAYLIST:
+        for song in self.PLAYLIST:
             media = VLC.media_new(song)
             media_list.add_media(media)
         player.set_media_list(media_list)
@@ -63,13 +78,15 @@ class IOT:
 
     def batti(self):
         self.BATTI_FLAG = not self.BATTI_FLAG
-        GPIO.output(BATTI, self.BATTI_FLAG)
+        GPIO.output(self.BATTI, self.BATTI_FLAG)
         print("Batti status: ",self.BATTI_FLAG)
+        pass
 
     def pankha(self):
         self.PANKA_FLAG = not self.PANKA_FLAG
-        GPIO.output(BATTI, self.PANKA_FLAG)
+        GPIO.output(self.BATTI, self.PANKA_FLAG)
         print("Pankha status: ",self.PANKA_FLAG)
+        pass
 
     def __speak(self, text):
         speak = gTTS(text=text, lang="ne", slow=False)
@@ -78,6 +95,19 @@ class IOT:
         playsound(file)
         os.remove(file)
 
+
+def start_server():
+    server.listen()
+    print(f"[LISTENING] Server is listening on {SERVER}")
+
+def receive():
+    conn, addr = server.accept()
+    # print("[STARTING] server is starting...")
+    # print(f"[NEW CONNECTION] {addr} connected.")
+
+    message = conn.recv(1024).decode(FORMAT)
+    conn.close()
+    return str(message)
 
 def main():
     automate = IOT()
@@ -88,6 +118,7 @@ def main():
 
 if __name__ == "__main__":
     automate = IOT()
+    start_server()
     tasks = {
         "0": automate.samaye,
         "1": automate.sangeet,
@@ -99,9 +130,13 @@ if __name__ == "__main__":
     }
 
     while True:
-        prediction = input("Enter prediction: ")
-        # print(prediction)
+        # prediction = input("Enter prediction: ")
+        prediction = receive()
+        print("Action: ",SENTENCES[int(prediction)])
+        # print(type(prediction))
+        # break
         try:
             tasks[prediction]()
         except Exception as ex:
             print("Please Enter valid prediction key or check your internet connection")
+            print("Error: ", ex)
