@@ -2,6 +2,9 @@ from config import LENGTH,SAMPLING_RATE
 from inference_live import Inference
 import time
 import numpy as np
+
+import socket_client_live
+
 import brainflow
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, LogLevels, BoardIds
 from brainflow.data_filter import DataFilter
@@ -72,8 +75,11 @@ def loop():
                 #make prediction
                 inf = Inference()
                 prediction = inf.predict(data)
-                print("Prediction: ", prediction)
+                print("Prediction: ", prediction[0])
                 
+                #control IOT device
+                socket_client_live.send(prediction[1])
+
                 key = input("Press any key to continue predicting or n to exit: ")
                 if key.upper()=="N":
                     break
