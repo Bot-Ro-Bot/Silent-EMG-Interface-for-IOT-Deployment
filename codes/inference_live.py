@@ -13,7 +13,7 @@ class _Inference:
         feat = self.features(signal)
         feat = feat[np.newaxis,...]
         prediction = np.argmax(self.model.predict(feat))
-        return SENTENCES[int(prediction)]
+        return (SENTENCES[int(prediction)],int(prediction))
 
 def Inference():
     if _Inference._instance is None:
@@ -28,4 +28,4 @@ def Inference():
 
 if __name__ == "__main__":
     inf = Inference()
-    print(inf.predict("../test/test1.txt"))
+    print(inf.predict("../test/test1.txt")[0])
