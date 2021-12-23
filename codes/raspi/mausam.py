@@ -59,11 +59,13 @@ def get_weather():
 	try:		
 		for key,value in triggers.items():
 			if(key in forecast):
-				# print("KEY: " ,key)
+				print("KEY: " ,key)
 				weather = value
-				break
+				# MAKE_ERROR
+				break 
 	except:
-		return "मलाई थाहा छैन"
+		# return "मलाई थाहा छैन"
+		return "क्षमा गर्नु होस मलाई थाहा छैन"
 
 	mausam = "आजको तापक्रम" + str(int(temp_now)) + "डिग्री सेल्सियस हुन का साथै" + str(weather) + "सम्भावना छ"
 	return mausam

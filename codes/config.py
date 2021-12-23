@@ -141,7 +141,6 @@ def signal_pipeline(data, RICKER=False):
         """
         HPF --> NOTCH --> LPF --> RICKER CONVOLUTION
         """
-
         # highpass filter
         f_signal = biosppy.signals.tools.filter_signal(
             data, ftype="butter", band="highpass", order=H_ORDER, sampling_rate=SR, frequency=HPF)
@@ -204,6 +203,7 @@ def spectogram(data):
         temp_data = process_signal(d)
         feature_data.extend([temp_data])
     return np.array(feature_data)
+    
 
 def CNN_1D(INPUT_SHAPE=(1654,8), DROPOUT=0.3, learning_rate=0.0003, activation="relu", neurons=64, K_regulizer=0.001):
     model = keras.models.Sequential()
