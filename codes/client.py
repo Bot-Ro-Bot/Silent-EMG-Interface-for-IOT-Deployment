@@ -2,7 +2,7 @@ import requests
 
 URL = "http://127.0.0.1:5000/predict"
 
-FILE_PATH = "../test/A.txt"
+FILE_PATH = "../test/test1.txt"
 
 if __name__=="__main__":
     signal = open(FILE_PATH,"rb")

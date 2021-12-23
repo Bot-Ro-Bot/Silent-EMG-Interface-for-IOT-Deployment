@@ -4,8 +4,8 @@ HEADER = 64
 PORT = 5050
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
-# SERVER = "192.168.0.112"
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = "192.168.0.112"
+# SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER, PORT)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -22,5 +22,5 @@ def send(msg):
 
 # send(DISCONNECT_MESSAGE)
 if __name__=="__main__":
-    send("1")
+    send("3")
 
